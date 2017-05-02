@@ -1,0 +1,49 @@
+.add-block {
+  margin: 0;
+  margin-top: 15px;
+  padding: 15px;
+  background-color: lightgray;
+}
+
+ul {
+  list-style: none;
+  display: block;
+  padding: 0;
+}
+
+.ui.checkbox label,
+.ui.checkbox + label {
+  display: inline-block;
+}
+
+.completed {
+  opacity: 0.2;
+  text-decoration: line-through;
+}
+
+h4 {
+  display: inline-block;
+  margin-bottom: 30px;
+}
+
+ul li {
+  line-height: 1.7;
+  padding-bottom: 5px;
+  font-size: 1.2em;
+  vertical-align: top;
+}
+
+.ui.checkbox label,
+.ui.checkbox + label {
+  display: inline-block;
+}
+
+div [class*="left floated"] {
+  float: left;
+  margin-left: 0.25em;
+}
+
+div [class*="right floated"] {
+  float: right;
+   margin-right: 0.25em;
+}

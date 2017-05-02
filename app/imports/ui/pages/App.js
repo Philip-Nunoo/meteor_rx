@@ -1,16 +1,12 @@
 /** imports/ui/pages/App.js **/
 
-import { Random } from 'meteor/random';
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { Button, Checkbox, Grid, Icon, Input } from 'semantic-ui-react';
-import { Task } from '/imports/ui/components';
-
-const tasks = [
-  { _id: Random.id(), text: 'This is task 1', checked: false },
-  { _id: Random.id(), text: 'This is task 2', checked: false },
-  { _id: Random.id(), text: 'This is task 3', checked: false },
-];
+import { Random } from "meteor/random";
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import { Button, Checkbox, Grid, Icon, Input } from "semantic-ui-react";
+import { connect } from "rx_state";
+import { Task } from "/imports/ui/components";
+import actions from "/imports/client/store/actions";
 
 class App extends Component {
   constructor(props) {
@@ -18,14 +14,11 @@ class App extends Component {
 
     this.state = {
       hideCompleted: false,
-      tasks,
     };
 
     this._toggleHideCompleted = this._toggleHideCompleted.bind(this);
     this._handleInputChange = this._handleInputChange.bind(this);
     this._handleSubmit = this._handleSubmit.bind(this);
-    this._toggleCheck = this._toggleCheck.bind(this);
-    this._deleteTask = this._deleteTask.bind(this);
   }
 
   _toggleHideCompleted() {
@@ -34,25 +27,8 @@ class App extends Component {
     });
   }
 
-  _toggleCheck(payload) {
-    const tasks = this.state.tasks.map((task) => {
-      if (task._id === payload) {
-        task.checked = !task.checked;
-      }
-      return task;
-    });
-
-    this.setState({ tasks });
-  }
-
-  _deleteTask(payload) {
-    const tasks = this.state.tasks.filter(({ _id }) => (_id !== payload));
-
-    this.setState({ tasks });
-  }
-
   renderTasks() {
-    let filteredTasks = this.state.tasks;
+    let filteredTasks = this.props.tasks;
 
     if (this.state.hideCompleted) {
       filteredTasks = filteredTasks.filter(task => !task.checked);
@@ -61,8 +37,8 @@ class App extends Component {
       <Task
         key={index}
         task={task}
-        toggleCheck={this._toggleCheck}
-        deleteTask={this._deleteTask}
+        toggleCheck={this.props.toggleCheck}
+        deleteTask={this.props.deleteTask}
       />
     ));
   }
@@ -74,7 +50,7 @@ class App extends Component {
     const { text, tasks } = this.state;
 
     // Add new task to array
-    tasks.push({_id: Random.id(), text, checked: false });
+    this.props.addTask(text);
     // Clear form
     this.setState({ todoText: '' });
   }
@@ -125,5 +101,11 @@ class App extends Component {
   }
 }
 
+const mapRxStateToProps = ({ tasks}) => ({
+  tasks,
+  addTask(task) { actions.addTask$.next(task); },
+  deleteTask(id) { actions.deleteTask$.next(id); },
+  toggleCheck(id) { actions.toggleCheck$.next(id); },
+});
 
-export default App;
+export default connect(mapRxStateToProps)(App);
